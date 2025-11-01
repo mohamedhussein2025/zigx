@@ -1,11 +1,20 @@
+<div align="center">
+
 # ZigX
 
 [![PyPI version](https://badge.fury.io/py/zigx.svg)](https://badge.fury.io/py/zigx)
+[![PyPI downloads](https://img.shields.io/pypi/dm/zigx.svg)](https://pypi.org/project/zigx/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/pypi/pyversions/zigx.svg)](https://pypi.org/project/zigx/)
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://muhammad-fiaz.github.io/zigx)
+[![CI](https://github.com/muhammad-fiaz/zigx/actions/workflows/deploy.yml/badge.svg)](https://github.com/muhammad-fiaz/zigx/actions)
+[![GitHub issues](https://img.shields.io/github/issues/muhammad-fiaz/zigx)](https://github.com/muhammad-fiaz/zigx/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/muhammad-fiaz/zigx)](https://github.com/muhammad-fiaz/zigx/pulls)
+[![GitHub last commit](https://img.shields.io/github/last-commit/muhammad-fiaz/zigx)](https://github.com/muhammad-fiaz/zigx/commits/main)
 
-A maturin-like Python binding system implemented in pure Zig.
+*A maturin-like Python binding system implemented in pure Zig.*
+
+</div>
 
 ZigX makes it easy to create Python extensions using Zig, providing automatic ctypes-based bindings, type stub generation, GIL support, and cross-platform wheel building.
 
