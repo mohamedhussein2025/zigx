@@ -23,29 +23,30 @@ import platform
 import subprocess
 import sys
 from pathlib import Path
+from typing import Optional
 
 
-def find_zigx_binary() -> Path:
+def find_zigx_binary() -> Optional[Path]:
     """Find the zigx binary in common locations."""
     # Check if running from source
     pkg_dir = Path(__file__).parent
-    
+
     # Look for zig-out directory (built binary)
     zig_out = pkg_dir / "zig-out" / "bin" / get_binary_name()
     if zig_out.exists():
         return zig_out
-    
+
     # Look in parent's zig-out (development mode)
     parent_zig_out = pkg_dir.parent / "zigx" / "zig-out" / "bin" / get_binary_name()
     if parent_zig_out.exists():
         return parent_zig_out
-    
+
     # Look in installed location
     bin_dir = Path(sys.prefix) / "bin"
     installed = bin_dir / get_binary_name()
     if installed.exists():
         return installed
-    
+
     # Check if zig is available and try to build
     return None
 
@@ -62,16 +63,16 @@ def ensure_binary() -> Path:
     binary = find_zigx_binary()
     if binary:
         return binary
-    
+
     # Try to build from source
     pkg_dir = Path(__file__).parent
     zig_src = pkg_dir / "src"
-    
+
     # Check for Zig source
     if not (zig_src / "main.zig").exists():
         # Maybe in development structure
         zig_src = pkg_dir.parent / "zigx" / "src"
-    
+
     if (zig_src / "main.zig").exists():
         build_dir = zig_src.parent
         print("Building zigx from source...", file=sys.stderr)
@@ -91,7 +92,7 @@ def ensure_binary() -> Path:
                 print(f"Build failed: {result.stderr}", file=sys.stderr)
         except FileNotFoundError:
             pass
-    
+
     raise RuntimeError(
         "zigx binary not found. Please ensure Zig is installed and run:\n"
         "  cd zigx && zig build\n"
@@ -106,7 +107,7 @@ def run(*args: str) -> int:
     except RuntimeError as e:
         print(str(e), file=sys.stderr)
         return 1
-    
+
     result = subprocess.run([str(binary)] + list(args), check=False)
     return result.returncode
 
