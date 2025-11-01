@@ -1,0 +1,469 @@
+const std = @import("std");
+const fs = std.fs;
+
+pub fn execute(allocator: std.mem.Allocator, args: []const []const u8) !void {
+    if (args.len < 1) {
+        std.debug.print("Error: Project name required\n", .{});
+        std.debug.print("Usage: zigx new <project-name>\n", .{});
+        return error.MissingProjectName;
+    }
+
+    const project_name = args[0];
+
+    std.debug.print("🦎 Creating new ZigX project: {s}\n", .{project_name});
+
+    // Create project directory
+    try fs.cwd().makeDir(project_name);
+
+    // Create subdirectories
+    const dirs_to_create = [_][]const u8{
+        "src",
+        project_name,
+        "tests",
+        ".zigx_build",
+    };
+
+    for (dirs_to_create) |dir| {
+        const full_path = try std.fs.path.join(allocator, &.{ project_name, dir });
+        defer allocator.free(full_path);
+        fs.cwd().makeDir(full_path) catch |err| {
+            if (err != error.PathAlreadyExists) return err;
+        };
+    }
+
+    // Create pyproject.toml
+    try createPyprojectToml(allocator, project_name);
+
+    // Create src/lib.zig
+    try createLibZig(allocator, project_name);
+
+    // Create <project>/__init__.py
+    try createInitPy(allocator, project_name);
+
+    // Create <project>/_native.py
+    try createNativePy(allocator, project_name);
+
+    // Create <project>/_<project>.pyi
+    try createPyi(allocator, project_name);
+
+    // Create tests/test_basic.py
+    try createTestFile(allocator, project_name);
+
+    // Create README.md
+    try createReadme(allocator, project_name);
+
+    // Create .gitignore
+    try createGitignore(allocator, project_name);
+
+    std.debug.print("\n✅ Project '{s}' created successfully!\n\n", .{project_name});
+    std.debug.print("Next steps:\n", .{});
+    std.debug.print("  cd {s}\n", .{project_name});
+    std.debug.print("  uv venv\n", .{});
+    std.debug.print("  uv pip install -e .\n", .{});
+    std.debug.print("  zigx develop\n", .{});
+    std.debug.print("\nThen test with:\n", .{});
+    std.debug.print("  python -c \"import {s}; print({s}.add(1, 2))\"\n", .{ project_name, project_name });
+}
+
+fn createPyprojectToml(allocator: std.mem.Allocator, project_name: []const u8) !void {
+    const path = try std.fs.path.join(allocator, &.{ project_name, "pyproject.toml" });
+    defer allocator.free(path);
+
+    const content = try std.fmt.allocPrint(allocator,
+        \\[build-system]
+        \\requires = ["zigx"]
+        \\build-backend = "zigx.build"
+        \\
+        \\[project]
+        \\name = "{s}"
+        \\version = "0.1.0"
+        \\description = "A Python extension built with ZigX"
+        \\readme = "README.md"
+        \\requires-python = ">=3.8"
+        \\classifiers = [
+        \\    "Programming Language :: Python :: 3",
+        \\    "License :: OSI Approved :: MIT License",
+        \\    "Operating System :: OS Independent",
+        \\]
+        \\
+        \\[tool.zigx]
+        \\src = "src/lib.zig"
+        \\
+        \\# Define your exported functions here
+        \\# Format: name, args (name:zig_type:py_type), return_type, gil_release, doc
+        \\[[tool.zigx.functions]]
+        \\name = "add"
+        \\args = "a:i32:int, b:i32:int"
+        \\return_type = "i32"
+        \\gil_release = true
+        \\doc = "Add two integers"
+        \\
+        \\[[tool.zigx.functions]]
+        \\name = "fib"
+        \\args = "n:u64:int"
+        \\return_type = "u64"
+        \\gil_release = true
+        \\doc = "Calculate the nth Fibonacci number"
+        \\
+        \\[[tool.zigx.functions]]
+        \\name = "greet"
+        \\args = ""
+        \\return_type = "void"
+        \\gil_release = true
+        \\doc = "Print a greeting message"
+        \\
+    , .{project_name});
+    defer allocator.free(content);
+
+    const file = try fs.cwd().createFile(path, .{});
+    defer file.close();
+    try file.writeAll(content);
+}
+
+fn createLibZig(allocator: std.mem.Allocator, project_name: []const u8) !void {
+    const path = try std.fs.path.join(allocator, &.{ project_name, "src", "lib.zig" });
+    defer allocator.free(path);
+
+    const content =
+        \\// src/lib.zig - Your Zig extension code
+        \\// Simply use `export fn` to expose functions to Python
+        \\
+        \\const std = @import("std");
+        \\
+        \\/// Add two integers
+        \\export fn add(a: i32, b: i32) i32 {
+        \\    return a + b;
+        \\}
+        \\
+        \\/// Calculate the nth Fibonacci number
+        \\export fn fib(n: u64) u64 {
+        \\    if (n < 2) return n;
+        \\    var a: u64 = 0;
+        \\    var b: u64 = 1;
+        \\    var i: u64 = 1;
+        \\    while (i < n) : (i += 1) {
+        \\        const tmp = a + b;
+        \\        a = b;
+        \\        b = tmp;
+        \\    }
+        \\    return b;
+        \\}
+        \\
+        \\/// Print a greeting message
+        \\export fn greet() void {
+        \\    std.debug.print("Hello from Zig!\n", .{});
+        \\}
+        \\
+        \\// For more advanced usage with Python interop:
+        \\// const zigx = @import("zigx");
+        \\//
+        \\// export fn compute_with_python(py: *zigx.Py) !i32 {
+        \\//     const math = try py.import("math");
+        \\//     const result = try math.call("sqrt", .{49});
+        \\//     return try result.toInt();
+        \\// }
+        \\
+    ;
+
+    const file = try fs.cwd().createFile(path, .{});
+    defer file.close();
+    try file.writeAll(content);
+}
+
+fn createInitPy(allocator: std.mem.Allocator, project_name: []const u8) !void {
+    const path = try std.fs.path.join(allocator, &.{ project_name, project_name, "__init__.py" });
+    defer allocator.free(path);
+
+    const content = try std.fmt.allocPrint(allocator,
+        \\"""
+        \\{s} - A Python extension built with ZigX
+        \\"""
+        \\
+        \\from ._native import add, fib, greet
+        \\
+        \\__version__ = "0.1.0"
+        \\__all__ = ["add", "fib", "greet"]
+        \\
+    , .{project_name});
+    defer allocator.free(content);
+
+    const file = try fs.cwd().createFile(path, .{});
+    defer file.close();
+    try file.writeAll(content);
+}
+
+fn createNativePy(allocator: std.mem.Allocator, project_name: []const u8) !void {
+    const path = try std.fs.path.join(allocator, &.{ project_name, project_name, "_native.py" });
+    defer allocator.free(path);
+
+    const content = try std.fmt.allocPrint(allocator,
+        \\"""
+        \\Native extension loader for {s}
+        \\
+        \\This file is auto-generated by ZigX. Do not edit manually.
+        \\"""
+        \\
+        \\import ctypes
+        \\import os
+        \\import sys
+        \\import sysconfig
+        \\from pathlib import Path
+        \\from typing import Optional
+        \\
+        \\# Extension suffix for the current platform
+        \\_EXT_SUFFIX = sysconfig.get_config_var("EXT_SUFFIX") or ".so"
+        \\
+        \\def _find_library() -> Optional[Path]:
+        \\    """Find the native library in various locations."""
+        \\    module_dir = Path(__file__).parent
+        \\    lib_name = f"_{s}_ext{{_EXT_SUFFIX}}"
+        \\    
+        \\    # Possible locations
+        \\    search_paths = [
+        \\        module_dir / lib_name,
+        \\        module_dir.parent / ".zigx_build" / lib_name,
+        \\        module_dir.parent / "target" / "debug" / lib_name,
+        \\        module_dir.parent / "target" / "release" / lib_name,
+        \\    ]
+        \\    
+        \\    for path in search_paths:
+        \\        if path.exists():
+        \\            return path
+        \\    
+        \\    return None
+        \\
+        \\def _load_library():
+        \\    """Load the native library."""
+        \\    lib_path = _find_library()
+        \\    if lib_path is None:
+        \\        raise ImportError(
+        \\            f"Could not find native library. "
+        \\            f"Run 'zigx develop' or 'zigx build' first."
+        \\        )
+        \\    
+        \\    return ctypes.CDLL(str(lib_path))
+        \\
+        \\# Load the library
+        \\_lib = _load_library()
+        \\
+        \\# Configure function signatures
+        \\_lib.add.argtypes = [ctypes.c_int32, ctypes.c_int32]
+        \\_lib.add.restype = ctypes.c_int32
+        \\
+        \\_lib.fib.argtypes = [ctypes.c_uint64]
+        \\_lib.fib.restype = ctypes.c_uint64
+        \\
+        \\_lib.greet.argtypes = []
+        \\_lib.greet.restype = None
+        \\
+        \\# Wrapper functions with type hints
+        \\def add(a: int, b: int) -> int:
+        \\    """Add two integers."""
+        \\    return _lib.add(a, b)
+        \\
+        \\def fib(n: int) -> int:
+        \\    """Calculate the nth Fibonacci number."""
+        \\    return _lib.fib(n)
+        \\
+        \\def greet() -> None:
+        \\    """Print a greeting message."""
+        \\    _lib.greet()
+        \\
+    , .{ project_name, project_name });
+    defer allocator.free(content);
+
+    const file = try fs.cwd().createFile(path, .{});
+    defer file.close();
+    try file.writeAll(content);
+}
+
+fn createPyi(allocator: std.mem.Allocator, project_name: []const u8) !void {
+    const filename = try std.fmt.allocPrint(allocator, "_{s}.pyi", .{project_name});
+    defer allocator.free(filename);
+
+    const path = try std.fs.path.join(allocator, &.{ project_name, project_name, filename });
+    defer allocator.free(path);
+
+    const content = try std.fmt.allocPrint(allocator,
+        \\"""
+        \\Type stubs for {s} native extension
+        \\
+        \\This file is auto-generated by ZigX. Do not edit manually.
+        \\"""
+        \\
+        \\def add(a: int, b: int) -> int:
+        \\    """Add two integers."""
+        \\    ...
+        \\
+        \\def fib(n: int) -> int:
+        \\    """Calculate the nth Fibonacci number."""
+        \\    ...
+        \\
+        \\def greet() -> None:
+        \\    """Print a greeting message."""
+        \\    ...
+        \\
+    , .{project_name});
+    defer allocator.free(content);
+
+    const file = try fs.cwd().createFile(path, .{});
+    defer file.close();
+    try file.writeAll(content);
+}
+
+fn createTestFile(allocator: std.mem.Allocator, project_name: []const u8) !void {
+    const path = try std.fs.path.join(allocator, &.{ project_name, "tests", "test_basic.py" });
+    defer allocator.free(path);
+
+    const content = try std.fmt.allocPrint(allocator,
+        \\"""
+        \\Basic tests for {s}
+        \\"""
+        \\
+        \\import {s}
+        \\
+        \\
+        \\def test_add():
+        \\    """Test the add function."""
+        \\    assert {s}.add(1, 2) == 3
+        \\    assert {s}.add(-1, 1) == 0
+        \\    assert {s}.add(0, 0) == 0
+        \\
+        \\
+        \\def test_fib():
+        \\    """Test the Fibonacci function."""
+        \\    assert {s}.fib(0) == 0
+        \\    assert {s}.fib(1) == 1
+        \\    assert {s}.fib(10) == 55
+        \\    assert {s}.fib(20) == 6765
+        \\
+        \\
+        \\def test_greet():
+        \\    """Test the greet function (just ensure it doesn't crash)."""
+        \\    {s}.greet()
+        \\
+        \\
+        \\if __name__ == "__main__":
+        \\    test_add()
+        \\    test_fib()
+        \\    test_greet()
+        \\    print("All tests passed!")
+        \\
+    , .{ project_name, project_name, project_name, project_name, project_name, project_name, project_name, project_name, project_name, project_name });
+    defer allocator.free(content);
+
+    const file = try fs.cwd().createFile(path, .{});
+    defer file.close();
+    try file.writeAll(content);
+}
+
+fn createReadme(allocator: std.mem.Allocator, project_name: []const u8) !void {
+    const path = try std.fs.path.join(allocator, &.{ project_name, "README.md" });
+    defer allocator.free(path);
+
+    const content = try std.fmt.allocPrint(allocator,
+        \\# {s}
+        \\
+        \\A Python extension built with ZigX.
+        \\
+        \\## Installation
+        \\
+        \\### Development
+        \\
+        \\```bash
+        \\# Create virtual environment
+        \\uv venv
+        \\source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+        \\
+        \\# Build and install for development
+        \\zigx develop
+        \\```
+        \\
+        \\### Building a wheel
+        \\
+        \\```bash
+        \\zigx build --release
+        \\```
+        \\
+        \\## Usage
+        \\
+        \\```python
+        \\import {s}
+        \\
+        \\# Add two numbers
+        \\result = {s}.add(1, 2)
+        \\print(result)  # 3
+        \\
+        \\# Calculate Fibonacci
+        \\fib_10 = {s}.fib(10)
+        \\print(fib_10)  # 55
+        \\
+        \\# Print greeting
+        \\{s}.greet()
+        \\```
+        \\
+        \\## Development
+        \\
+        \\The Zig source code is in `src/lib.zig`. Simply use `export fn` to expose functions to Python.
+        \\
+        \\Define your function signatures in `pyproject.toml` under `[[tool.zigx.functions]]`.
+        \\
+        \\## Testing
+        \\
+        \\```bash
+        \\pytest tests/
+        \\```
+        \\
+    , .{ project_name, project_name, project_name, project_name, project_name });
+    defer allocator.free(content);
+
+    const file = try fs.cwd().createFile(path, .{});
+    defer file.close();
+    try file.writeAll(content);
+}
+
+fn createGitignore(allocator: std.mem.Allocator, project_name: []const u8) !void {
+    const path = try std.fs.path.join(allocator, &.{ project_name, ".gitignore" });
+    defer allocator.free(path);
+
+    const content =
+        \\# ZigX build artifacts
+        \\.zigx_build/
+        \\zig-out/
+        \\zig-cache/
+        \\.zig-cache/
+        \\
+        \\# Python
+        \\__pycache__/
+        \\*.py[cod]
+        \\*$py.class
+        \\.Python
+        \\*.so
+        \\*.pyd
+        \\*.egg-info/
+        \\dist/
+        \\build/
+        \\*.egg
+        \\.eggs/
+        \\
+        \\# Virtual environments
+        \\.venv/
+        \\venv/
+        \\ENV/
+        \\
+        \\# IDE
+        \\.idea/
+        \\.vscode/
+        \\*.swp
+        \\*.swo
+        \\
+        \\# OS
+        \\.DS_Store
+        \\Thumbs.db
+        \\
+    ;
+
+    const file = try fs.cwd().createFile(path, .{});
+    defer file.close();
+    try file.writeAll(content);
+}

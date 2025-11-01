@@ -1,0 +1,96 @@
+site_name: ZigX
+site_url: https://muhammad-fiaz.github.io/zigx
+site_author: Muhammad Fiaz
+site_description: A maturin-like Python binding system implemented in pure Zig
+
+repo_name: muhammad-fiaz/zigx
+repo_url: https://github.com/muhammad-fiaz/zigx
+
+copyright: Copyright &copy; 2024 Muhammad Fiaz
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+    - Your First Project: getting-started/first-project.md
+  - User Guide:
+    - Writing Zig Code: guide/writing-zig.md
+    - Type Mappings: guide/type-mappings.md
+    - GIL Support: guide/gil-support.md
+    - Building Wheels: guide/building-wheels.md
+    - Publishing: guide/publishing.md
+  - Reference:
+    - CLI Commands: reference/cli.md
+    - Configuration: reference/configuration.md
+    - API Reference: reference/api.md
+  - Examples:
+    - Basic Example: examples/basic.md
+    - Advanced Example: examples/advanced.md
+    - Multithreading: examples/multithreading.md
+  - Contributing: contributing.md
+  - Changelog: changelog.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/muhammad-fiaz
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/zigx/

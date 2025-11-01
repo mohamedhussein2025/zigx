@@ -1,0 +1,74 @@
+[project]
+name = "zigx"
+version = "0.0.1"
+description = "A maturin-like Python binding system for Zig - build Python extensions with Zig"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Muhammad Fiaz", email = "contact@muhammadfiaz.com" }
+]
+keywords = ["zig", "python", "bindings", "ffi", "native", "extension", "maturin", "pyo3"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Other",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Compilers",
+    "Topic :: Software Development :: Code Generators",
+    "Typing :: Typed",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0",
+]
+docs = [
+    "mkdocs>=1.5",
+    "mkdocs-material>=9.0",
+    "mkdocstrings[python]>=0.24",
+]
+
+[project.urls]
+Homepage = "https://github.com/muhammad-fiaz/zigx"
+Documentation = "https://muhammad-fiaz.github.io/zigx"
+Repository = "https://github.com/muhammad-fiaz/zigx"
+Issues = "https://github.com/muhammad-fiaz/zigx/issues"
+Changelog = "https://github.com/muhammad-fiaz/zigx/blob/main/CHANGELOG.md"
+
+[project.scripts]
+zigx = "zigx:main"
+
+[build-system]
+requires = ["uv_build>=0.9.13,<0.10"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+
+[tool.ruff]
+target-version = "py38"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
