@@ -36,6 +36,7 @@ dev = [
     "pytest-cov>=4.0",
     "ruff>=0.1.0",
     "mypy>=1.0",
+    "hatchling>=1.0",
 ]
 docs = [
     "mkdocs>=1.5",
@@ -62,9 +63,6 @@ path = "zigx/build.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["zigx"]
-
-[tool.hatch.build.targets.wheel.force-include]
-"zigx/zig-out/bin/*" = "zigx/bin/"
 
 [tool.ruff]
 target-version = "py38"

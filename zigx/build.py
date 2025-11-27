@@ -90,8 +90,20 @@ class ZigBuildHook(BuildHookInterface):
             print(f"⚠️  Warning: Binary not found at {binary_path}", file=sys.stderr)
             return
 
+        # Copy binary to package directory for inclusion
+        package_bin_dir = zigx_dir / "bin"
+        package_bin_dir.mkdir(exist_ok=True)
+        package_binary_path = package_bin_dir / binary_name
+
+        import shutil
+
+        shutil.copy2(binary_path, package_binary_path)
+
         # Make executable on Unix
         if platform.system() != "Windows":
-            binary_path.chmod(0o755)
+            package_binary_path.chmod(0o755)
 
-        print(f"✅ Successfully compiled zigx binary at {binary_path}", file=sys.stderr)
+        print(
+            f"✅ Successfully compiled and copied zigx binary to {package_binary_path}",
+            file=sys.stderr,
+        )
